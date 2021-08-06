@@ -45,23 +45,14 @@ def main(_argv):
     # evaluation
     if FLAGS.img_path:
         print("[*] Processing on single image {}".format(FLAGS.img_path))
-        raw_img = cv2.imread(FLAGS.img_path)
-        lr_img, hr_img = create_lr_hr_pair(raw_img, cfg['scale'])
+        lr_img = cv2.imread(FLAGS.img_path)
 
         sr_img = tensor2img(model(lr_img[np.newaxis, :] / 255))
         bic_img = imresize_np(lr_img, cfg['scale']).astype(np.uint8)
 
-        str_format = "[{}] PSNR/SSIM: Bic={:.2f}db/{:.2f}, SR={:.2f}db/{:.2f}"
-        print(
-            str_format.format(
-                os.path.basename(FLAGS.img_path),
-                calculate_psnr(rgb2ycbcr(bic_img), rgb2ycbcr(hr_img)),
-                calculate_ssim(rgb2ycbcr(bic_img), rgb2ycbcr(hr_img)),
-                calculate_psnr(rgb2ycbcr(sr_img), rgb2ycbcr(hr_img)),
-                calculate_ssim(rgb2ycbcr(sr_img), rgb2ycbcr(hr_img))))
         result_img_path = './Bic_SR_HR_' + os.path.basename(FLAGS.img_path)
         print("[*] write the result image {}".format(result_img_path))
-        results_img = np.concatenate((bic_img, sr_img, hr_img), 1)
+        results_img = np.concatenate((bic_img, sr_img), 1)
         cv2.imwrite(result_img_path, results_img)
 
 
