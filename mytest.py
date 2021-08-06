@@ -14,8 +14,8 @@ from modules.utils import (load_yaml, set_memory_growth, imresize_np,
 flags.DEFINE_string('cfg_path', './configs/esrgan.yaml', 'config file path')
 flags.DEFINE_string('gpu', '0', 'which gpu to use')
 flags.DEFINE_string('img_path', '', 'path to input image')
-flags.DEFINE_string('crop_size', 256, '')
-flags.DEFINE_string('crop_num', 3, '')
+flags.DEFINE_integer('crop_size', 256, '')
+flags.DEFINE_integer('crop_num', 3, '')
 
 
 def random_crop(image, crop_size=(224, 224)):
