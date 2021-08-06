@@ -34,8 +34,8 @@ def random_crop(image, crop_size=(224, 224)):
     return image
 
 
-def save_image(bic_img, sr_img, num):
-    result_img_path = f'./Bic_SR_{num}_' + os.path.basename(FLAGS.img_path)
+def save_image(bic_img, sr_img):
+    result_img_path = f'./Bic_SR_' + os.path.basename(FLAGS.img_path)
     print("[*] write the result image {}".format(result_img_path))
     results_img = np.concatenate((bic_img, sr_img), 1)
     cv2.imwrite(result_img_path, results_img)
@@ -79,6 +79,8 @@ def main(_argv):
             save_image(bic_img, sr_img, 0)
 
         else:
+            sr_imgs = np.array()
+            bic_imgs = np.array()
             for i in range(FLAGS.crop_num):
                 lr_img = random_crop(src_lr_img,
                                      (FLAGS.crop_size, FLAGS.crop_size))
@@ -86,7 +88,10 @@ def main(_argv):
                 sr_img = tensor2img(model(lr_img[np.newaxis, :] / 255))
                 bic_img = imresize_np(lr_img, cfg['scale']).astype(np.uint8)
 
-                save_image(bic_img, sr_img, i)
+                sr_imgs = np.concatenate((sr_imgs, sr_img), 1)
+                bic_imgs = np.concatenate((bic_imgs, bic_img), 1)
+
+            save_image(bic_img, sr_img)
 
 
 if __name__ == '__main__':
