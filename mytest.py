@@ -95,7 +95,7 @@ def main(_argv):
                     sr_imgs = np.concatenate((sr_imgs, sr_img), 0)
                     bic_imgs = np.concatenate((bic_imgs, bic_img), 0)
 
-            save_image(bic_img, sr_img)
+            save_image(bic_imgs, sr_imgs)
 
 
 if __name__ == '__main__':
