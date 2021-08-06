@@ -79,8 +79,8 @@ def main(_argv):
             save_image(bic_img, sr_img, 0)
 
         else:
-            sr_imgs = np.array()
-            bic_imgs = np.array()
+            sr_imgs = None
+            bic_imgs = None
             for i in range(FLAGS.crop_num):
                 lr_img = random_crop(src_lr_img,
                                      (FLAGS.crop_size, FLAGS.crop_size))
@@ -88,8 +88,12 @@ def main(_argv):
                 sr_img = tensor2img(model(lr_img[np.newaxis, :] / 255))
                 bic_img = imresize_np(lr_img, cfg['scale']).astype(np.uint8)
 
-                sr_imgs = np.concatenate((sr_imgs, sr_img), 1)
-                bic_imgs = np.concatenate((bic_imgs, bic_img), 1)
+                if sr_imgs is None:
+                    sr_imgs = sr_img
+                    bic_imgs = bic_img
+                else:
+                    sr_imgs = np.concatenate((sr_imgs, sr_img), 0)
+                    bic_imgs = np.concatenate((bic_imgs, bic_img), 0)
 
             save_image(bic_img, sr_img)
 
