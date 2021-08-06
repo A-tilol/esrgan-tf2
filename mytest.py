@@ -46,6 +46,10 @@ def main(_argv):
     if FLAGS.img_path:
         print("[*] Processing on single image {}".format(FLAGS.img_path))
         lr_img = cv2.imread(FLAGS.img_path)
+        h, w, _ = lr_img.shape
+
+        if h > 480 or w > 480:
+            lr_img = lr_img[:480, :480, :]
 
         sr_img = tensor2img(model(lr_img[np.newaxis, :] / 255))
         bic_img = imresize_np(lr_img, cfg['scale']).astype(np.uint8)
