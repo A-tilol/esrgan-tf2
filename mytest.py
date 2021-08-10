@@ -34,10 +34,10 @@ def random_crop(image, crop_size=(224, 224)):
     return image
 
 
-def save_image(bic_img, sr_img):
+def save_image(lr_imgs, bic_img, sr_img):
     result_img_path = f'./Bic_SR_' + os.path.basename(FLAGS.img_path)
     print("[*] write the result image {}".format(result_img_path))
-    results_img = np.concatenate((bic_img, sr_img), 1)
+    results_img = np.concatenate((lr_imgs, bic_img, sr_img), 1)
     cv2.imwrite(result_img_path, results_img)
 
 
@@ -110,7 +110,7 @@ def main(_argv):
                     sr_imgs = np.concatenate((sr_imgs, sr_img), 0)
                     bic_imgs = np.concatenate((bic_imgs, bic_img), 0)
 
-            save_image(bic_imgs, sr_imgs)
+            save_image(lr_imgs, bic_imgs, sr_imgs)
 
 
 if __name__ == '__main__':
