@@ -79,19 +79,34 @@ def main(_argv):
             save_image(bic_img, sr_img, 0)
 
         else:
+            lr_imgs = None
             sr_imgs = None
             bic_imgs = None
-            for i in range(FLAGS.crop_num):
+            for _ in range(FLAGS.crop_num):
                 lr_img = random_crop(src_lr_img,
                                      (FLAGS.crop_size, FLAGS.crop_size))
 
                 sr_img = tensor2img(model(lr_img[np.newaxis, :] / 255))
                 bic_img = imresize_np(lr_img, cfg['scale']).astype(np.uint8)
 
+                # add padding
+                lh, lw, _ = lr_img.shape
+                bh, bw, _ = bic_img.shape
+                padh, padw = (bh - lh) // 2, (bw - lw) // 2
+                lr_img = cv2.copyMakeBorder(lr_img.copy(),
+                                            padh,
+                                            padh,
+                                            padw,
+                                            padw,
+                                            cv2.BORDER_CONSTANT,
+                                            value=[0, 0, 0])
+
                 if sr_imgs is None:
+                    lr_imgs = lr_img
                     sr_imgs = sr_img
                     bic_imgs = bic_img
                 else:
+                    lr_imgs = np.concatenate((lr_imgs, lr_img), 0)
                     sr_imgs = np.concatenate((sr_imgs, sr_img), 0)
                     bic_imgs = np.concatenate((bic_imgs, bic_img), 0)
 
